@@ -52,14 +52,6 @@ jobs:
         env:
           CI: 'true'
 
-      - name: Upload HTML report (artifact)
-        if: always() && steps.guard.outputs.proceed == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-${{ github.run_id }}
-          path: playwright-report
-          retention-days: 30
-
       - name: Upload client-friendly report (CSV + summary HTML)
         if: always() && steps.guard.outputs.proceed == 'true'
         uses: actions/upload-artifact@v4
