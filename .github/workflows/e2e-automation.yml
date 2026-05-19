@@ -78,11 +78,17 @@ jobs:
           path: test-results
           retention-days: 14
 
+      - name: Stage client summary for Pages
+        if: always() && steps.guard.outputs.proceed == 'true'
+        run: |
+          mkdir -p pages-site
+          cp playwright-report/client-summary.html pages-site/index.html
+
       - name: Upload report for Pages
         if: always() && steps.guard.outputs.proceed == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: playwright-report
+          path: pages-site
 
   deploy-pages:
     name: Publish report to GitHub Pages
