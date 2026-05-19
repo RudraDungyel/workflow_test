@@ -59,19 +59,14 @@ function firstLine(value: string): string {
 export default class ClientReporter implements Reporter {
   private rows: Row[] = [];
   private startedAt = new Date();
-  private outputDir = 'playwright-report';
+  private outputDir: string;
 
-  onBegin(config: FullConfig, _suite: Suite): void {
+  constructor(options: { outputDir?: string } = {}) {
+    this.outputDir = options.outputDir ?? 'client-report';
+  }
+
+  onBegin(_config: FullConfig, _suite: Suite): void {
     this.startedAt = new Date();
-    const reporters = config.reporter ?? [];
-    for (const r of reporters) {
-      const name = Array.isArray(r) ? r[0] : (r as unknown as string);
-      const opts = Array.isArray(r) ? r[1] : undefined;
-      if (name === 'html' && opts && typeof opts === 'object' && 'outputFolder' in opts) {
-        const folder = (opts as { outputFolder?: string }).outputFolder;
-        if (folder) this.outputDir = folder;
-      }
-    }
   }
 
   onTestEnd(test: TestCase, result: TestResult): void {
