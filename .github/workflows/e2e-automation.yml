@@ -52,22 +52,12 @@ jobs:
         env:
           CI: 'true'
 
-      - name: Upload HTML report (artifact)
-        if: always() && steps.guard.outputs.proceed == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-${{ github.run_id }}
-          path: playwright-report
-          retention-days: 30
-
       - name: Upload client-friendly report (CSV + summary HTML)
         if: always() && steps.guard.outputs.proceed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: client-report-${{ github.run_id }}
-          path: |
-            playwright-report/client-report.csv
-            playwright-report/client-summary.html
+          path: client-report
           retention-days: 30
 
       - name: Upload traces and screenshots
@@ -80,15 +70,13 @@ jobs:
 
       - name: Stage client summary for Pages
         if: always() && steps.guard.outputs.proceed == 'true'
-        run: |
-          mkdir -p pages-site
-          cp playwright-report/client-summary.html pages-site/index.html
+        run: cp client-report/client-summary.html client-report/index.html
 
       - name: Upload report for Pages
         if: always() && steps.guard.outputs.proceed == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: pages-site
+          path: client-report
 
   deploy-pages:
     name: Publish report to GitHub Pages
